@@ -106,31 +106,25 @@ def scraping_mars_hemispheres_mage_urls_and_titles(browser):
     browser.visit(url)
 
     # 2. Create a list to hold the images and titles.
+    html = browser.html
+    hemisphere_image_soup = soup(html, 'html.parser')
     hemisphere_image_urls = []
 
     # 3. Write code to retrieve the image urls and titles for each hemisphere.
-    image_urls_and_titles = hemisphere_soup.find_all('div', class_='item')
-
+    image_urls_and_titles = hemisphere_image_soup.find_all('div', class_='item')
 
     for info in image_urls_and_titles:
         hemispheres = {}
-   
-        
         img_url_rel = info.find('a', class_='itemLink product-item').get("href")
+        base_url= "https://astrogeology.usgs.gov"
         img_url = base_url + img_url_rel
         browser.visit(img_url)
-        
-        # parse HTML with BeautifulSoup
         html = browser.html
         hemispheres_image_soup = soup(html, 'html.parser')
-        
-        # retrieve full image and image title
-        full_img_url = hemispheres_image_soup.find('div', class_='downloads').find('a').get('href')
-        img_title = hemispheres_image_soup.find('h2', class_='title').text
-        
-        # Append information
-        hemisphere_image_urls.append({"img_url" : full_img_url, "title" : img_title})
-   
+        full_image_url = hemispheres_image_soup.find('div', class_='downloads').find('a').get('href')
+        image_title = hemispheres_image_soup.find('h2', class_='title').text
+        hemisphere_image_urls.append({"img_url" : full_image_url, "title" : image_title})
+  
     return hemisphere_image_urls
 
 if __name__ == "__main__":
